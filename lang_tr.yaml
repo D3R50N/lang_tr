@@ -1,0 +1,3 @@
+lang_dir: lib/lang_tr
+output_file: lib/lang_tr.dart
+default_lang: en
