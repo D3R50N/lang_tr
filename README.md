@@ -37,6 +37,17 @@ flutter pub run lang_tr:generate path_to_lang_tr.yaml
 
 This will generate the translation file `lang_tr.dart` according to the settings specified in your `lang_tr.yaml` file.
 
+### Use cases
+
+Inside the `lang_dir` directory, you can create translation files for each language you want to support. The files should be named according to the language code and in json format. Here's an example of a translation file for the English language `en.json`:
+
+```json
+{
+  "greet message": "Hello, World!",
+  "welcome message": "Welcome to my app!"
+}
+```
+
 ### Using in Code
 
 You can now use the translations in your application by importing the `lang_tr.dart` file and accessing methods and fields of the `LangTr` class.
@@ -47,7 +58,9 @@ import 'path_to_generated/lang_tr.dart';
 void main() {
   // Using translations
   String greeting = LangTr.greetMessage; // Accessing a specific translation
-  print(greeting); // Prints the greeting message
+  print(greeting); // Prints "Hello, World!"
+  LangTr.setLang('fr'); // Change the language. If the language is not found, the default language is used.
+  print(LangTr.greetMessage); // Prints the translation in French if available, otherwise in English.
 }
 ```
 
