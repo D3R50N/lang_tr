@@ -3,7 +3,6 @@ library lang_tr;
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:lang_tr/config.dart';
 
