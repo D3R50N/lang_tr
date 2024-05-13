@@ -1,6 +1,6 @@
 name: lang_tr
 description: "LangTr is a Flutter generator package designed to simplify the management of translation files in your Flutter applications"
-version: 0.0.1+1
+version: 0.0.2
 homepage: https://github.com/D3R50N/lang_tr.git
 
 environment:

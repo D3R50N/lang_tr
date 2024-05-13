@@ -1,3 +1,4 @@
 lang_dir: lib/lang_tr
-output_file: lib/lang_tr.dart
-default_lang: en
+output_dir: lib
+default_lang: fr
+current_lang: en

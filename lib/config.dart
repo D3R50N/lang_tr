@@ -8,13 +8,16 @@ abstract class LangConfig {
   static const String _configFileName = "lang_tr.yaml";
 
   /// The output file name for generated language files.
-  static String outputFileName = "lib/lang_tr.dart";
+  static String outputDirName = "lib/lang_tr.dart";
 
   /// The directory name where language files are located.
   static String langDirName = "lib/lang_tr";
 
   /// The default language.
   static String defaultLang = "en";
+
+  /// The current language.
+  static String currentLang = "";
 
   /// Initializes the language configuration.
   ///
@@ -28,12 +31,17 @@ abstract class LangConfig {
       List<String> lines = config.split("\n");
       for (var line in lines) {
         if (line.contains("output_file:")) {
-          outputFileName = line.split(":").last.trim();
+          outputDirName = line.split(":").last.trim();
         } else if (line.contains("lang_dir:")) {
           langDirName = line.split(":").last.trim();
         } else if (line.contains("default_lang:")) {
           defaultLang = line.split(":").last.trim();
+        } else if (line.contains("current_lang:")) {
+          currentLang = line.split(":").last.trim();
         }
+      }
+      if (currentLang.trim().isEmpty) {
+        currentLang = defaultLang; // set default language
       }
     } else {
       printWarning(

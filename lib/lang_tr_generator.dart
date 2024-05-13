@@ -3,6 +3,7 @@ library lang_tr;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:lang_tr/config.dart';
 
@@ -31,15 +32,17 @@ class LangTrGenerator {
     StringBuffer classBuffer = StringBuffer('abstract class LangTr {\n');
 
     _generateDefaultLangString(classBuffer);
+    _generateCurrentLangString(classBuffer);
     _generateLangGetter(classBuffer, files);
     _generateTrForJsonFiles(files, classBuffer);
-    _generateSetLangMethod(classBuffer);
+    _generateMethods(classBuffer);
     _generateKeys(classBuffer);
 
     // end of class
     classBuffer.write('}');
 
-    File outputFile = File(LangConfig.outputFileName);
+    File outputFile = File(
+        '${LangConfig.outputDirName}${Platform.pathSeparator}lang_tr.dart');
     outputFile.writeAsStringSync(classBuffer.toString());
 
     printSuccess('lang_tr.dart generated successfully!');
@@ -51,21 +54,50 @@ class LangTrGenerator {
         "  static String defaultLang = '${LangConfig.defaultLang}';\n\n");
   }
 
+  /// Generates the current language string.
+  static void _generateCurrentLangString(StringBuffer classBuffer) {
+    classBuffer.write(
+        "  static String _currentLang = '${LangConfig.currentLang}';\n\n");
+  }
+
   /// Generates the keys used for translation.
   static void _generateKeys(StringBuffer classBuffer) {
+    classBuffer.write("  // Keys getters\n");
     classBuffer.write(_keysGetter());
   }
 
   /// Generates the method for setting the default language.
   static void _generateSetLangMethod(StringBuffer classBuffer) {
-    classBuffer.write('  static void setLang(String lang){\n');
-    classBuffer.write('    defaultLang = lang;\n');
-    classBuffer.write('  }\n\n');
+    classBuffer.write('''  static void setLang(String lang) {
+    _currentLang = lang;
+    for (var listener in _listeners) {
+      listener(lang);
+    }
+  }
+''');
+  }
+
+  /// Generates the method for setting listeners.
+  static void _generateAddListenerMethod(StringBuffer classBuffer) {
+    classBuffer.write('''  static final List<Function(String)> _listeners = [];
+  static void addListener(Function(String lang) listener) {
+    _listeners.add(listener);
+  }\n
+''');
+  }
+
+  /// Generates the methods.
+  static void _generateMethods(StringBuffer classBuffer) {
+    classBuffer.write("  // Class methods\n");
+    _generateAddListenerMethod(classBuffer);
+    _generateSetLangMethod(classBuffer);
+    classBuffer.write('\n');
   }
 
   /// Generates the translation methods for JSON files.
   static void _generateTrForJsonFiles(
       List<FileSystemEntity> files, StringBuffer classBuffer) {
+    classBuffer.write("  // Translation maps\n");
     for (var file in files) {
       if (file is File && file.path.endsWith('.json')) {
         String fileName = file.path
@@ -82,8 +114,10 @@ class LangTrGenerator {
   /// Generates the getter for accessing the language map.
   static void _generateLangGetter(
       StringBuffer classBuffer, List<FileSystemEntity> files) {
+    classBuffer.write("  // Lang mapper\n");
+
     classBuffer
-        .write('  static Map<String, Map<String, String>> get lang => {\n');
+        .write('  static Map<String, Map<String, String>> get _lang => {\n');
     for (var file in files) {
       if (file is File && file.path.endsWith('.json')) {
         String fileName = file.path
@@ -128,7 +162,7 @@ class LangTrGenerator {
     StringBuffer keysBuffer = StringBuffer();
     for (var key in _keys) {
       keysBuffer.write(
-          '  static String get $key => lang[defaultLang]?["$key"] ?? "$key";\n');
+          '  static String get $key => _lang[_currentLang]?["$key"] ?? _lang[defaultLang]?["$key"] ?? "$key";\n');
     }
     return keysBuffer.toString();
   }

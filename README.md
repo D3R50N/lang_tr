@@ -19,20 +19,28 @@ To use `LangTr`, you can create a `lang_tr.yaml` configuration file in the root 
 
 ```yaml
 lang_dir: lib/lang_tr
-output_file: lib/lang_tr.dart
-default_lang: en
+output_dir: lib
+default_lang: fr
+current_lang: en
 ```
 
 - `lang_dir`: The path to the directory containing your translation files.
 - `output_file`: The path and name of the generated translation file.
 - `default_lang`: The default language to use if no language is specified.
+- `current_lang`: The initial translation language.
 
 ### Generating Translation Files
 
 To generate the translation file from the configuration file, run the following command in your terminal:
 
 ```bash
-flutter pub run lang_tr:generate path_to_lang_tr.yaml
+dart pub run lang_tr:generate path_to_lang_tr.yaml
+```
+
+or without the configuration file
+
+```bash
+dart pub run lang_tr:generate
 ```
 
 This will generate the translation file `lang_tr.dart` according to the settings specified in your `lang_tr.yaml` file.
@@ -61,6 +69,10 @@ void main() {
   print(greeting); // Prints "Hello, World!"
   LangTr.setLang('fr'); // Change the language. If the language is not found, the default language is used.
   print(LangTr.greetMessage); // Prints the translation in French if available, otherwise in English.
+
+  LangTr.addListener((lang){
+    // do something when the language changes
+  });
 }
 ```
 
