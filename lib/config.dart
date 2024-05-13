@@ -8,7 +8,7 @@ abstract class LangConfig {
   static const String _configFileName = "lang_tr.yaml";
 
   /// The output file name for generated language files.
-  static String outputDirName = "lib/lang_tr.dart";
+  static String outputDirName = "lib";
 
   /// The directory name where language files are located.
   static String langDirName = "lib/lang_tr";
@@ -32,8 +32,15 @@ abstract class LangConfig {
       for (var line in lines) {
         if (line.contains("output_file:")) {
           outputDirName = line.split(":").last.trim();
+          if (outputDirName.endsWith("/") || outputDirName.endsWith("\\")) {
+            outputDirName =
+                outputDirName.substring(0, outputDirName.length - 1);
+          }
         } else if (line.contains("lang_dir:")) {
           langDirName = line.split(":").last.trim();
+          if (langDirName.endsWith("/") || langDirName.endsWith("\\")) {
+            langDirName = langDirName.substring(0, langDirName.length - 1);
+          }
         } else if (line.contains("default_lang:")) {
           defaultLang = line.split(":").last.trim();
         } else if (line.contains("current_lang:")) {
